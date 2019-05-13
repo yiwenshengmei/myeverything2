@@ -63,12 +63,12 @@ namespace MyEverything {
 					prujd, Marshal.SizeOf(typeof(PInvokeWin32.READ_USN_JOURNAL_DATA)),
 					pbuffer, 0x1000, out cbRead, IntPtr.Zero);
 
-				IntPtr pRealData = new IntPtr(pbuffer.ToInt32() + Marshal.SizeOf(typeof(Int64))); // 返回的内存块头上的8个字节是一个usn_id, 从第9个字节开始才是record.
+				IntPtr pRealData = new IntPtr(pbuffer.ToInt64() + Marshal.SizeOf(typeof(Int64))); // 返回的内存块头上的8个字节是一个usn_id, 从第9个字节开始才是record.
 				uint offset = 0;
 
 				if (fok) {
 					while (offset + Marshal.SizeOf(typeof(Int64)) < cbRead) { // record可能有多个!
-						PInvokeWin32.USN_RECORD usn = new PInvokeWin32.USN_RECORD(new IntPtr(pRealData.ToInt32() + (int) offset));
+						PInvokeWin32.USN_RECORD usn = new PInvokeWin32.USN_RECORD(new IntPtr(pRealData.ToInt64() + (int) offset));
 						ProcessUSN(usn, volume, db);
 						offset += usn.RecordLength;
 					}
